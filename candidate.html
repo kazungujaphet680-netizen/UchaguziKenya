@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Candidate Profile | Uchaguzi Kenya</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        body {
+            background: #f4f7f5;
+        }
+
+        .profile-container,
+        .edit-container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 850px;
+            margin: 25px auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .profile-photo {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            max-width: 850px;
+            margin: 20px auto;
+        }
+
+        button,
+        .back-button {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .edit-button,
+        .save-button,
+        .back-button {
+            background: #006b3f;
+            color: white;
+        }
+
+        .delete-button {
+            background: #ce1126;
+            color: white;
+        }
+
+        .cancel-button {
+            background: #555;
+            color: white;
+        }
+
+        .edit-container label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .edit-container input,
+        .edit-container textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .edit-container textarea {
+            min-height: 100px;
+        }
+
+        #editMessage {
+            font-weight: bold;
+            color: #ce1126;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header>
+
+    <h2>UCHAGUZI KENYA</h2>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="parties.html">Political Parties</a>
+    </nav>
+
+</header>
+
+
+<section>
+
+    <h1>Candidate Profile</h1>
+
+
+    <!-- CANDIDATE INFORMATION -->
+
+    <div class="profile-container" id="profileContainer">
+
+        Loading candidate information...
+
+    </div>
+
+
+    <!-- ACTION BUTTONS -->
+
+    <div class="action-buttons">
+
+        <button
+            type="button"
+            id="editButton"
+            class="edit-button">
+
+            Edit Candidate
+
+        </button>
+
+
+        <button
+            type="button"
+            id="deleteButton"
+            class="delete-button">
+
+            Delete Candidate
+
+        </button>
+
+
+        <a
+            href="#"
+            id="backButton"
+            class="back-button">
+
+            Back to Candidates
+
+        </a>
+
+    </div>
+
+
+    <!-- EDIT FORM -->
+
+    <div
+        class="edit-container"
+        id="editContainer"
+        style="display:none;">
+
+        <h2>Edit Candidate Information</h2>
+
+
+        <form id="editForm">
+
+            <label for="editName">
+                Candidate Full Name
+            </label>
+
+            <input
+                type="text"
+                id="editName"
+                required>
+
+
+            <label for="editParty">
+                Political Party
+            </label>
+
+            <input
+                type="text"
+                id="editParty"
+                required>
+
+
+            <label for="editPhoto">
+                Change Photograph
+            </label>
+
+            <input
+                type="file"
+                id="editPhoto"
+                accept="image/*">
+
+            <small>Maximum photograph size: 500 KB.</small>
+
+
+            <label for="editBiography">
+                Biography
+            </label>
+
+            <textarea
+                id="editBiography"
+                required></textarea>
+
+
+            <label for="editManifesto">
+                Manifesto
+            </label>
+
+            <textarea
+                id="editManifesto"
+                required></textarea>
+
+
+            <br><br>
+
+
+            <button
+                type="submit"
+                class="save-button">
+
+                Save Changes
+
+            </button>
+
+
+            <button
+                type="button"
+                id="cancelButton"
+                class="cancel-button">
+
+                Cancel
+
+            </button>
+
+        </form>
+
+
+        <p id="editMessage"></p>
+
+    </div>
+
+</section>
+
+
+<footer>
+
+    <p>
+        UCHAGUZI KENYA |
+        Your Vote. Your Voice. Your Future.
+    </p>
+
+</footer>
+
+
+<script>
+
+// GET INFORMATION FROM URL
+
+const params = new URLSearchParams(window.location.search);
+
+const county = params.get("county");
+
+const position = params.get("position");
+
+const candidateId = params.get("candidate");
+
+
+// STORAGE KEY
+
+const storageKey =
+    "uchaguziCandidates_" + county + "_" + position;
+
+
+// PAGE ELEMENTS
+
+const profileContainer =
+    document.getElementById("profileContainer");
+
+const editContainer =
+    document.getElementById("editContainer");
+
+const editButton =
+    document.getElementById("editButton");
+
+const deleteButton =
+    document.getElementById("deleteButton");
+
+const backButton =
+    document.getElementById("backButton");
+
+const editForm =
+    document.getElementById("editForm");
+
+const editMessage =
+    document.getElementById("editMessage");
+
+
+let candidates = [];
+
+let candidate = null;
+
+
+// BACK BUTTON
+
+if (county && position) {
+
+    backButton.href =
+        "position.html?county=" +
+        encodeURIComponent(county) +
+        "&position=" +
+        encodeURIComponent(position);
+
+} else {
+
+    backButton.href = "index.html";
+
+}
+
+
+// LOAD CANDIDATE
+
+function loadCandidate() {
+
+    try {
+
+        candidates = JSON.parse(
+            localStorage.getItem(storageKey) || "[]"
+        );
+
+    } catch (error) {
+
+        candidates = [];
+
+    }
+
+
+    candidate = candidates.find(function(item) {
+
+        return String(item.id) === String(candidateId);
+
+    });
+
+
+    if (!candidate) {
+
+        profileContainer.textContent =
+            "Candidate not found.";
+
+        editButton.style.display = "none";
+
+        deleteButton.style.display = "none";
+
+        return;
+
+    }
+
+
+    displayCandidate();
+
+}
+
+
+// DISPLAY PROFILE
+
+function displayCandidate() {
+
+    profileContainer.innerHTML = "";
+
+
+    if (candidate.photo) {
+
+        const photo = document.createElement("img");
+
+        photo.src = candidate.photo;
+
+        photo.alt = candidate.name;
+
+        photo.className = "profile-photo";
+
+        profileContainer.appendChild(photo);
+
+    }
+
+
+    const name = document.createElement("h2");
+
+    name.textContent = candidate.name;
+
+
+    const party = document.createElement("p");
+
+    party.textContent =
+        "Political Party: " + candidate.party;
+
+
+    const countyText = document.createElement("p");
+
+    countyText.textContent =
+        "County: " + county;
+
+
+    const positionText = document.createElement("p");
+
+    positionText.textContent =
+        "Elective Position: " + position;
+
+
+    const bioHeading = document.createElement("h3");
+
+    bioHeading.textContent = "Biography";
+
+
+    const biography = document.createElement("p");
+
+    biography.textContent = candidate.biography;
+
+
+    const manifestoHeading = document.createElement("h3");
+
+    manifestoHeading.textContent = "Manifesto";
+
+
+    const manifesto = document.createElement("p");
+
+    manifesto.textContent = candidate.manifesto;
+
+
+    profileContainer.appendChild(name);
+
+    profileContainer.appendChild(party);
+
+    profileContainer.appendChild(countyText);
+
+    profileContainer.appendChild(positionText);
+
+    profileContainer.appendChild(bioHeading);
+
+    profileContainer.appendChild(biography);
+
+    profileContainer.appendChild(manifestoHeading);
+
+    profileContainer.appendChild(manifesto);
+
+}
+
+
+// OPEN EDIT FORM
+
+editButton.addEventListener("click", function() {
+
+    if (!candidate) {
+
+        alert("Candidate not found.");
+
+        return;
+
+    }
+
+
+    document.getElementById("editName").value =
+        candidate.name || "";
+
+    document.getElementById("editParty").value =
+        candidate.party || "";
+
+    document.getElementById("editBiography").value =
+        candidate.biography || "";
+
+    document.getElementById("editManifesto").value =
+        candidate.manifesto || "";
+
+
+    editMessage.textContent = "";
+
+    editContainer.style.display = "block";
+
+    editContainer.scrollIntoView({
+        behavior: "smooth"
+    });
+
+});
+
+
+// CANCEL EDITING
+
+document.getElementById("cancelButton")
+.addEventListener("click", function() {
+
+    editContainer.style.display = "none";
+
+    editForm.reset();
+
+});
+
+
+// SAVE CHANGES
+
+editForm.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+
+    const newName =
+        document.getElementById("editName").value.trim();
+
+    const newParty =
+        document.getElementById("editParty").value.trim();
+
+    const newBiography =
+        document.getElementById("editBiography").value.trim();
+
+    const newManifesto =
+        document.getElementById("editManifesto").value.trim();
+
+    const photoFile =
+        document.getElementById("editPhoto").files[0];
+
+
+    function saveCandidate(newPhoto) {
+
+        candidate.name = newName;
+
+        candidate.party = newParty;
+
+        candidate.biography = newBiography;
+
+        candidate.manifesto = newManifesto;
+
+
+        if (newPhoto) {
+
+            candidate.photo = newPhoto;
+
+        }
+
+
+        try {
+
+            localStorage.setItem(
+                storageKey,
+                JSON.stringify(candidates)
+            );
+
+
+            displayCandidate();
+
+            editContainer.style.display = "none";
+
+            editForm.reset();
+
+            alert("Candidate updated successfully!");
+
+        } catch (error) {
+
+            editMessage.textContent =
+                "Unable to save changes. Try a smaller photograph.";
+
+        }
+
+    }
+
+
+    if (photoFile) {
+
+        if (!photoFile.type.startsWith("image/")) {
+
+            editMessage.textContent =
+                "Please select a valid image.";
+
+            return;
+
+        }
+
+
+        if (photoFile.size > 500 * 1024) {
+
+            editMessage.textContent =
+                "Photograph must not exceed 500 KB.";
+
+            return;
+
+        }
+
+
+        const reader = new FileReader();
+
+
+        reader.onload = function() {
+
+            saveCandidate(reader.result);
+
+        };
+
+
+        reader.onerror = function() {
+
+            editMessage.textContent =
+                "Unable to read photograph.";
+
+        };
+
+
+        reader.readAsDataURL(photoFile);
+
+    } else {
+
+        saveCandidate(null);
+
+    }
+
+});
+
+
+// DELETE CANDIDATE
+
+deleteButton.addEventListener("click", function() {
+
+    if (!candidate) return;
+
+
+    const confirmation = confirm(
+
+        "Are you sure you want to delete " +
+        candidate.name + "?"
+
+    );
+
+
+    if (confirmation) {
+
+        candidates = candidates.filter(function(item) {
+
+            return String(item.id) !== String(candidateId);
+
+        });
+
+
+        localStorage.setItem(
+            storageKey,
+            JSON.stringify(candidates)
+        );
+
+
+        alert("Candidate deleted successfully!");
+
+
+        window.location.href = backButton.href;
+
+    }
+
+});
+
+
+// START PAGE
+
+if (county && position && candidateId) {
+
+    loadCandidate();
+
+} else {
+
+    profileContainer.textContent =
+        "Please select a candidate from the directory.";
+
+    editButton.style.display = "none";
+
+    deleteButton.style.display = "none";
+
+}
+
+</script>
+
+</body>
+</html>

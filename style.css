@@ -1,0 +1,554 @@
+/* =========================================
+   UCHAGUZI KENYA - COMPLETE WEBSITE DESIGN
+========================================= */
+
+/* GENERAL SETTINGS */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f5;
+    color: #000000;
+}
+
+/* =========================================
+   WEBSITE HEADER
+========================================= */
+
+header {
+    background-color: #006b3f;
+    color: white;
+    padding: 25px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+header h2 {
+    margin: 0;
+    font-size: 28px;
+    letter-spacing: 1px;
+}
+
+/* NAVIGATION */
+
+nav {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #ce1126;
+}
+
+/* =========================================
+   GENERAL SECTIONS
+========================================= */
+
+section {
+    padding: 40px 35px;
+}
+
+section h1 {
+    font-size: 32px;
+    color: #006b3f;
+}
+
+section p {
+    font-size: 16px;
+    color: #555555;
+    line-height: 1.6;
+}
+
+/* =========================================
+   ELECTIVE POSITIONS
+========================================= */
+
+.positions-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    width: 100%;
+    margin-top: 30px;
+}
+
+.position-card {
+    background-color: white;
+    padding: 25px;
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+    transition: 0.3s;
+}
+
+.position-card h2 {
+    color: #006b3f;
+    font-size: 20px;
+}
+
+.position-card p {
+    font-size: 14px;
+    color: #555555;
+}
+
+/* =========================================
+   POLITICAL PARTIES DIRECTORY
+========================================= */
+
+.parties-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    width: 100%;
+    margin-top: 30px;
+}
+
+.party-card {
+    display: block;
+    width: 100%;
+    min-height: 160px;
+    background-color: white;
+    padding: 25px;
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+    transition: 0.3s;
+}
+
+.party-card h2 {
+    color: #006b3f;
+    font-size: 19px;
+}
+
+.party-card h3 {
+    color: #ce1126;
+    font-size: 22px;
+}
+
+.party-card p {
+    color: #555555;
+    font-size: 14px;
+}
+
+/* POLITICAL PARTY SEARCH */
+
+#partySearch {
+    display: block;
+    width: 100%;
+    max-width: 450px;
+    padding: 14px;
+    margin: 20px 0;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 16px;
+    outline: none;
+}
+
+#partySearch:focus {
+    border-color: #006b3f;
+    box-shadow: 0 0 5px rgba(0, 107, 63, 0.2);
+}
+
+/* =========================================
+   COUNTY DIRECTORY
+========================================= */
+
+.counties-container {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+    width: 100%;
+    margin-top: 30px;
+}
+
+.county-card {
+    display: block;
+    width: 100%;
+    background-color: white;
+    padding: 22px;
+    text-align: center;
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    color: #006b3f;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+    transition: 0.3s;
+}
+
+/* COUNTY SEARCH */
+
+#countySearch {
+    display: block;
+    width: 100%;
+    max-width: 450px;
+    padding: 14px;
+    margin: 20px 0;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 16px;
+    outline: none;
+}
+
+#countySearch:focus {
+    border-color: #006b3f;
+}
+
+/* COUNTY INFORMATION */
+
+#countyDetails {
+    background-color: white;
+    padding: 25px;
+    margin-top: 30px;
+    border-radius: 10px;
+    border: 1px solid #dddddd;
+}
+
+#countyDetails h2 {
+    color: #006b3f;
+}
+
+/* =========================================
+   HOVER EFFECTS
+========================================= */
+
+.position-card:hover,
+.party-card:hover,
+.county-card:hover {
+    transform: translateY(-5px);
+    border-color: #006b3f;
+    box-shadow: 0 5px 15px rgba(0, 107, 63, 0.15);
+}
+
+.county-card:hover {
+    background-color: #006b3f;
+    color: white;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+    background-color: #006b3f;
+    color: white;
+    text-align: center;
+    padding: 30px;
+    margin-top: 40px;
+}
+
+footer p {
+    color: white;
+    font-size: 14px;
+}
+
+/* =========================================
+   TABLET RESPONSIVENESS
+========================================= */
+
+@media screen and (max-width: 900px) {
+
+    .positions-container,
+    .parties-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .counties-container {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    header {
+        gap: 20px;
+    }
+}
+
+/* =========================================
+   MOBILE RESPONSIVENESS
+========================================= */
+
+@media screen and (max-width: 600px) {
+
+    .positions-container,
+    .parties-container {
+        grid-template-columns: 1fr;
+    }
+
+    .counties-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    section {
+        padding: 25px 15px;
+    }
+
+    section h1 {
+        font-size: 25px;
+    }
+
+    header {
+        padding: 20px 15px;
+    }
+
+    header h2 {
+        font-size: 23px;
+    }
+
+    nav {
+        gap: 12px;
+    }
+
+    nav a {
+        font-size: 14px;
+    }
+
+    .party-card,
+    .position-card {
+        padding: 20px;
+    }
+}/* PARTY SUBMISSION FORM */
+
+#partyForm {
+    max-width: 550px;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+}
+
+#partyForm label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+#partyForm input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+#partyForm button {
+    margin-top: 20px;
+    padding: 13px 25px;
+    background: #006b3f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#partyForm button:hover {
+    background: #004d2d;
+}
+
+#submissionMessage {
+    color: #006b3f;
+    font-weight: bold;
+}/* HOMEPAGE HORIZONTAL LAYOUT */
+
+.positions-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+}
+
+.counties-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    width: 100%;
+}
+
+.parties-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+}
+
+/* RESPONSIVE LAYOUT */
+
+@media (max-width: 900px) {
+    .positions-container,
+    .parties-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .counties-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .positions-container,
+    .parties-container,
+    .counties-container {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}/* HOMEPAGE DESIGN - SCREENSHOT STYLE */
+
+header {
+    display: block;
+    background-color: #006b3f;
+    color: white;
+    padding: 15px 37px 35px;
+}
+
+header h2 {
+    font-size: 36px;
+    margin: 0 0 30px 0;
+}
+
+nav {
+    display: flex;
+    flex-direction: row;
+    gap: 45px;
+}
+
+nav a {
+    color: white;
+    font-size: 23px;
+    font-weight: normal;
+}
+
+.hero {
+    background-color: #f4f7f5;
+    color: #006b3f;
+    text-align: left;
+    padding: 85px 37px;
+    min-height: 320px;
+}
+
+.hero h1 {
+    font-size: 50px;
+    margin-bottom: 25px;
+    color: #006b3f;
+}
+
+.hero p {
+    font-size: 24px;
+    color: #555;
+}/* UCHAGUZI KENYA - PLATFORM-WIDE BACKGROUND */
+
+body {
+    background-image:
+        linear-gradient(
+            rgba(0, 35, 18, 0.68),
+            rgba(0, 0, 0, 0.72)
+        ),
+        url("voters-background.png") !important;
+
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+    min-height: 100vh;
+}
+
+/* Keep website content readable */
+
+.panel,
+.card,
+.candidate-card,
+.county-card,
+.party-card,
+.form-container {
+    background-color: rgba(255, 255, 255, 0.96);
+}/* UCHAGUZI KENYA - IMPROVED PLATFORM BACKGROUND */
+
+body {
+    background-image:
+        linear-gradient(
+            rgba(0, 0, 0, 0.25),
+            rgba(0, 0, 0, 0.30)
+        ),
+        url("voters-background.png") !important;
+
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+    min-height: 100vh;
+}
+
+/* KENYAN FLAG COLOURS AT THE TOP */
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 9px;
+    background: linear-gradient(
+        to right,
+        #000000 0%,
+        #000000 25%,
+        #ffffff 25%,
+        #ffffff 30%,
+        #ce1126 30%,
+        #ce1126 55%,
+        #ffffff 55%,
+        #ffffff 60%,
+        #006b3f 60%,
+        #006b3f 100%
+    );
+    z-index: 9999;
+}
+
+/* KENYAN FLAG COLOURS AT THE BOTTOM */
+
+body::after {
+    content: "";
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 9px;
+    background: linear-gradient(
+        to right,
+        #000000 0%,
+        #000000 25%,
+        #ffffff 25%,
+        #ffffff 30%,
+        #ce1126 30%,
+        #ce1126 55%,
+        #ffffff 55%,
+        #ffffff 60%,
+        #006b3f 60%,
+        #006b3f 100%
+    );
+    z-index: 9999;
+}
+
+/* MAKE CONTENT PANELS LESS OPAQUE */
+
+.panel,
+.card,
+.candidate-card,
+.county-card,
+.party-card,
+.form-container {
+    background-color: rgba(255, 255, 255, 0.88) !important;
+}

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Constituencies | Uchaguzi Kenya</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+.page-container {
+    max-width: 1200px;
+    margin: 35px auto;
+    padding: 20px;
+}
+
+.content-box {
+    background: rgba(255,255,255,0.96);
+    color: #222;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+h2 {
+    color: #006b3f;
+}
+
+select, input {
+    width: 100%;
+    padding: 13px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.constituency-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.constituency-card {
+    background: #f4f7f5;
+    padding: 18px;
+    border-left: 5px solid #006b3f;
+    border-radius: 8px;
+}
+
+.constituency-card button {
+    background: #006b3f;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+header {
+    background: #006b3f;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+nav {
+    background: #111;
+    padding: 15px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Uchaguzi Kenya</h1>
+    <p>Constituency Directory</p>
+</header>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="county.html">Counties</a>
+    <a href="parties.html">Political Parties</a>
+    <a href="admin.html">Admin Dashboard</a>
+</nav>
+
+<div class="page-container">
+<div class="content-box">
+
+<h2>Kenya Constituencies</h2>
+<p>Select a county to view its constituencies.</p>
+
+<select id="countySelect">
+    <option value="">Select County</option>
+</select>
+
+<input type="text" id="search" placeholder="Search constituency...">
+
+<h2 id="countyTitle">All Constituencies</h2>
+
+<div class="constituency-grid" id="constituencyList"></div>
+
+</div>
+</div>
+
+<script>
+const counties = {
+    "Mombasa": ["Changamwe","Jomvu","Kisauni","Nyali","Likoni","Mvita"],
+    "Kwale": ["Msambweni","Lunga Lunga","Matuga","Kinango"],
+    "Kilifi": ["Kilifi North","Kilifi South","Kaloleni","Rabai","Ganze","Malindi","Magarini"],
+    "Tana River": ["Garsen","Galole","Bura"],
+    "Lamu": ["Lamu East","Lamu West"],
+    "Taita Taveta": ["Taveta","Wundanyi","Mwatate","Voi"],
+    "Garissa": ["Garissa Township","Balambala","Lagdera","Dadaab","Fafi","Ijara"],
+    "Wajir": ["Wajir North","Wajir East","Wajir South","Wajir West","Tarbaj","Eldas"],
+    "Mandera": ["Mandera West","Banissa","Mandera North","Mandera South","Mandera East","Lafey"],
+    "Marsabit": ["Moyale","North Horr","Saku","Laisamis"],
+    "Isiolo": ["Isiolo North","Isiolo South"],
+    "Meru": ["Igembe South","Igembe Central","Igembe North","Tigania West","Tigania East","North Imenti","Buuri","Central Imenti","South Imenti"],
+    "Tharaka Nithi": ["Maara","Chuka/Igambang'ombe","Tharaka"],
+    "Embu": ["Manyatta","Runyenjes","Mbeere South","Mbeere North"],
+    "Kitui": ["Mwingi North","Mwingi West","Mwingi Central","Kitui West","Kitui Rural","Kitui Central","Kitui East","Kitui South"],
+    "Machakos": ["Masinga","Yatta","Kangundo","Matungulu","Kathiani","Mavoko","Machakos Town","Mwala"],
+    "Makueni": ["Mbooni","Kilome","Kaiti","Makueni","Kibwezi West","Kibwezi East"],
+    "Nyandarua": ["Kinangop","Kipipiri","Ol Kalou","Ol Jorok","Ndaragwa"],
+    "Nyeri": ["Tetu","Kieni","Mathira","Othaya","Mukurweini","Nyeri Town"],
+    "Kirinyaga": ["Mwea","Gichugu","Ndia","Kirinyaga Central"],
+    "Murang'a": ["Kangema","Mathioya","Kiharu","Kigumo","Maragwa","Kandara","Gatanga"],
+    "Kiambu": ["Gatundu South","Gatundu North","Juja","Thika Town","Ruiru","Githunguri","Kiambu","Kiambaa","Kabete","Kikuyu","Limuru","Lari"],
+    "Turkana": ["Turkana North","Turkana West","Turkana Central","Loima","Turkana South","Turkana East"],
+    "West Pokot": ["Kapenguria","Sigor","Kacheliba","Pokot South"],
+    "Samburu": ["Samburu West","Samburu North","Samburu East"],
+    "Trans Nzoia": ["Kwanza","Endebess","Saboti","Kiminini","Cherangany"],
+    "Uasin Gishu": ["Soy","Turbo","Moiben","Ainabkoi","Kapseret","Kesses"],
+    "Elgeyo Marakwet": ["Marakwet East","Marakwet West","Keiyo North","Keiyo South"],
+    "Nandi": ["Tinderet","Aldai","Nandi Hills","Chesumei","Emgwen","Mosop"],
+    "Baringo": ["Tiaty","Baringo North","Baringo Central","Baringo South","Mogotio","Eldama Ravine"],
+    "Laikipia": ["Laikipia West","Laikipia East","Laikipia North"],
+    "Nakuru": ["Molo","Njoro","Naivasha","Gilgil","Kuresoi South","Kuresoi North","Subukia","Rongai","Bahati","Nakuru Town West","Nakuru Town East"],
+    "Narok": ["Kilgoris","Emurua Dikirr","Narok North","Narok East","Narok South","Narok West"],
+    "Kajiado": ["Kajiado North","Kajiado Central","Kajiado East","Kajiado West","Kajiado South"],
+    "Kericho": ["Kipkelion East","Kipkelion West","Ainamoi","Bureti","Belgut","Sigowet/Soin"],
+    "Bomet": ["Sotik","Chepalungu","Bomet East","Bomet Central","Konoin"],
+    "Kakamega": ["Lugari","Likuyani","Malava","Lurambi","Navakholo","Mumias West","Mumias East","Matungu","Butere","Khwisero","Shinyalu","Ikolomani"],
+    "Vihiga": ["Vihiga","Sabatia","Hamisi","Luanda","Emuhaya"],
+    "Bungoma": ["Mt Elgon","Sirisia","Kabuchai","Bumula","Kanduyi","Webuye East","Webuye West","Kimilili","Tongaren"],
+    "Busia": ["Teso North","Teso South","Nambale","Matayos","Butula","Funyula","Budalangi"],
+    "Siaya": ["Ugenya","Ugunja","Alego Usonga","Gem","Bondo","Rarieda"],
+    "Kisumu": ["Kisumu East","Kisumu West","Kisumu Central","Seme","Nyando","Muhoroni","Nyakach"],
+    "Homa Bay": ["Kasipul","Kabondo Kasipul","Karachuonyo","Rangwe","Homa Bay Town","Ndhiwa","Mbita","Suba North"],
+    "Migori": ["Rongo","Awendo","Suna East","Suna West","Uriri","Nyatike","Kuria West","Kuria East"],
+    "Kisii": ["Bonchari","South Mugirango","Bomachoge Borabu","Bobasi","Bomachoge Chache","Nyaribari Masaba","Nyaribari Chache","Kitutu Chache North","Kitutu Chache South"],
+    "Nyamira": ["Kitutu Masaba","West Mugirango","North Mugirango","Borabu"],
+    "Nairobi": ["Westlands","Dagoretti North","Dagoretti South","Lang'ata","Kibra","Roysambu","Kasarani","Ruaraka","Embakasi South","Embakasi North","Embakasi Central","Embakasi East","Embakasi West","Makadara","Kamukunji","Starehe","Mathare"]
+};
+
+const countySelect = document.getElementById("countySelect");
+const constituencyList = document.getElementById("constituencyList");
+const countyTitle = document.getElementById("countyTitle");
+const search = document.getElementById("search");
+
+Object.keys(counties).forEach(county => {
+    const option = document.createElement("option");
+    option.value = county;
+    option.textContent = county;
+    countySelect.appendChild(option);
+});
+
+function displayConstituencies() {
+    const county = countySelect.value;
+    const term = search.value.toLowerCase();
+
+    constituencyList.innerHTML = "";
+
+    if (!county) {
+        countyTitle.textContent = "Select a County";
+        return;
+    }
+
+    countyTitle.textContent = county + " County Constituencies";
+
+    counties[county]
+        .filter(name => name.toLowerCase().includes(term))
+        .forEach(name => {
+            const card = document.createElement("div");
+            card.className = "constituency-card";
+
+            const title = document.createElement("h3");
+            title.textContent = name;
+
+            const button = document.createElement("button");
+            button.textContent = "View Candidates";
+            button.onclick = () => {
+                window.location.href =
+                    "position.html?county=" + encodeURIComponent(county) +
+                    "&position=" + encodeURIComponent("Member of Parliament") +
+                    "&constituency=" + encodeURIComponent(name);
+            };
+
+            card.appendChild(title);
+            card.appendChild(button);
+            constituencyList.appendChild(card);
+        });
+
+    if (constituencyList.children.length === 0) {
+        constituencyList.textContent = "No matching constituencies found.";
+    }
+}
+
+countySelect.addEventListener("change", displayConstituencies);
+search.addEventListener("input", displayConstituencies);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>County Elections | Uchaguzi Kenya</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .position-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        .position-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+
+        <h2>UCHAGUZI KENYA</h2>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="parties.html">Political Parties</a>
+        </nav>
+
+    </header>
+
+
+    <!-- COUNTY SECTION -->
+    <section>
+
+        <h1 id="countyName">County Elections</h1>
+
+        <p id="countyMessage">
+            Explore elective positions in this county.
+        </p>
+
+
+        <h2>County Elective Positions</h2>
+
+
+        <div class="positions-container">
+
+            <!-- GOVERNOR -->
+            <a href="position.html?county=Mombasa&position=Governor"
+               class="position-card"
+               id="governorLink">
+
+                <h2>Governor</h2>
+
+                <p>County Governor</p>
+
+                <p>View candidates and election information</p>
+
+            </a>
+
+
+            <!-- SENATOR -->
+            <a href="position.html?county=Mombasa&position=Senator"
+               class="position-card"
+               id="senatorLink">
+
+                <h2>Senator</h2>
+
+                <p>County Senator</p>
+
+                <p>View candidates and election information</p>
+
+            </a>
+
+
+            <!-- WOMAN REPRESENTATIVE -->
+            <a href="position.html?county=Mombasa&position=Woman%20Representative"
+               class="position-card"
+               id="womanRepLink">
+
+                <h2>Woman Representative</h2>
+
+                <p>National Assembly Representative</p>
+
+                <p>View candidates and election information</p>
+
+            </a>
+
+        </div>
+
+
+        <br>
+
+        <a href="index.html" class="main-button">
+            Back to Home
+        </a>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <p>
+            UCHAGUZI KENYA |
+            Your Vote. Your Voice. Your Future.
+        </p>
+
+    </footer>
+
+
+    <!-- COUNTY JAVASCRIPT -->
+    <script>
+
+        const parameters = new URLSearchParams(window.location.search);
+
+        const county = parameters.get("county");
+
+        if (county) {
+
+            document.getElementById("countyName").textContent =
+                county.toUpperCase() + " COUNTY";
+
+            document.getElementById("countyMessage").textContent =
+                "Elective positions in " + county + " County.";
+
+            // GOVERNOR LINK
+            document.getElementById("governorLink").href =
+                "position.html?county=" +
+                encodeURIComponent(county) +
+                "&position=Governor";
+
+            // SENATOR LINK
+            document.getElementById("senatorLink").href =
+                "position.html?county=" +
+                encodeURIComponent(county) +
+                "&position=Senator";
+
+            // WOMAN REPRESENTATIVE LINK
+            document.getElementById("womanRepLink").href =
+                "position.html?county=" +
+                encodeURIComponent(county) +
+                "&position=Woman%20Representative";
+
+        }
+
+    </script>
+
+</body>
+
+</html>

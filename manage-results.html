@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Election Results | Uchaguzi Kenya</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+    background:
+        linear-gradient(rgba(0,0,0,0.72), rgba(0,50,25,0.75)),
+        url("voters-background.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+header {
+    background: #006b3f;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 5px solid #ce1126;
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav {
+    background: #111;
+    padding: 15px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 10px;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.panel {
+    background: rgba(255,255,255,0.95);
+    color: #222;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+h2 {
+    color: #006b3f;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    background: #006b3f;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #004d2c;
+}
+
+.delete {
+    background: #ce1126;
+}
+
+.result {
+    background: #f1f1f1;
+    padding: 15px;
+    margin: 10px 0;
+    border-left: 5px solid #006b3f;
+    border-radius: 5px;
+}
+
+.result button {
+    width: auto;
+    padding: 8px 15px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #111;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Uchaguzi Kenya</h1>
+    <p>Election Results Management Centre</p>
+</header>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="admin.html">Dashboard</a>
+    <a href="results.html">Public Results</a>
+</nav>
+
+<div class="container">
+
+    <div class="panel">
+        <h2>Add or Edit Election Results</h2>
+
+        <form id="resultForm">
+            <input type="hidden" id="editIndex">
+
+            <label>Candidate Name</label>
+            <input type="text" id="candidate" required>
+
+            <label>Political Party</label>
+            <input type="text" id="party" required>
+
+            <label>Elective Position</label>
+            <select id="position" required>
+                <option value="">Select Position</option>
+                <option>President</option>
+                <option>Governor</option>
+                <option>Senator</option>
+                <option>Woman Representative</option>
+                <option>Member of Parliament</option>
+                <option>MCA</option>
+            </select>
+
+            <label>County</label>
+            <input type="text" id="county" required>
+
+            <label>Election Year</label>
+            <input type="number" id="year" required>
+
+            <label>Votes Received</label>
+            <input type="number" id="votes" min="0" required>
+
+            <label>Vote Percentage</label>
+            <input type="number" id="percentage" min="0" max="100" step="0.01">
+
+            <label>Result Status</label>
+            <select id="status" required>
+                <option value="Official">Official</option>
+                <option value="Unofficial">Unofficial</option>
+                <option value="Pending Verification">Pending Verification</option>
+            </select>
+
+            <label>Source of Information</label>
+            <input type="text" id="source" placeholder="e.g. IEBC official declaration" required>
+
+            <button type="submit">Save Election Result</button>
+        </form>
+    </div>
+
+    <div class="panel">
+        <h2>Election Results Records</h2>
+
+        <input type="text" id="search" placeholder="Search candidate, party or county...">
+
+        <div id="resultsList"></div>
+    </div>
+
+</div>
+
+<footer>
+    <p>Uchaguzi Kenya | Your Vote. Your Voice. Your Future.</p>
+    <p>Independent election information portal.</p>
+</footer>
+
+<script>
+let results = JSON.parse(localStorage.getItem("uchaguziResults")) || [];
+
+const form = document.getElementById("resultForm");
+const list = document.getElementById("resultsList");
+
+function saveResults() {
+    localStorage.setItem("uchaguziResults", JSON.stringify(results));
+}
+
+function displayResults(searchTerm = "") {
+    list.innerHTML = "";
+
+    const filtered = results.filter(result =>
+        Object.values(result).some(value =>
+            String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        )
+    );
+
+    if (filtered.length === 0) {
+        list.innerHTML = "<p>No election results found.</p>";
+        return;
+    }
+
+    filtered.forEach(result => {
+        const index = results.indexOf(result);
+
+        list.innerHTML += `
+            <div class="result">
+                <h3>${escapeHTML(result.candidate)}</h3>
+                <p><strong>Party:</strong> ${escapeHTML(result.party)}</p>
+                <p><strong>Position:</strong> ${escapeHTML(result.position)}</p>
+                <p><strong>County:</strong> ${escapeHTML(result.county)}</p>
+                <p><strong>Year:</strong> ${escapeHTML(result.year)}</p>
+                <p><strong>Votes:</strong> ${escapeHTML(result.votes)}</p>
+                <p><strong>Percentage:</strong> ${escapeHTML(result.percentage)}%</p>
+                <p><strong>Status:</strong> ${escapeHTML(result.status)}</p>
+                <p><strong>Source:</strong> ${escapeHTML(result.source)}</p>
+
+                <button onclick="editResult(${index})">Edit</button>
+                <button class="delete" onclick="deleteResult(${index})">Delete</button>
+            </div>
+        `;
+    });
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[character]);
+}
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const result = {
+        candidate: document.getElementById("candidate").value,
+        party: document.getElementById("party").value,
+        position: document.getElementById("position").value,
+        county: document.getElementById("county").value,
+        year: document.getElementById("year").value,
+        votes: document.getElementById("votes").value,
+        percentage: document.getElementById("percentage").value,
+        status: document.getElementById("status").value,
+        source: document.getElementById("source").value
+    };
+
+    const editIndex = document.getElementById("editIndex").value;
+
+    if (editIndex === "") {
+        results.push(result);
+    } else {
+        results[Number(editIndex)] = result;
+    }
+
+    saveResults();
+    form.reset();
+    document.getElementById("editIndex").value = "";
+    displayResults();
+});
+
+function editResult(index) {
+    const result = results[index];
+
+    document.getElementById("candidate").value = result.candidate;
+    document.getElementById("party").value = result.party;
+    document.getElementById("position").value = result.position;
+    document.getElementById("county").value = result.county;
+    document.getElementById("year").value = result.year;
+    document.getElementById("votes").value = result.votes;
+    document.getElementById("percentage").value = result.percentage;
+    document.getElementById("status").value = result.status;
+    document.getElementById("source").value = result.source;
+    document.getElementById("editIndex").value = index;
+
+    window.scrollTo(0, 0);
+}
+
+function deleteResult(index) {
+    if (confirm("Are you sure you want to delete this result?")) {
+        results.splice(index, 1);
+        saveResults();
+        displayResults();
+    }
+}
+
+document.getElementById("search").addEventListener("input", function() {
+    displayResults(this.value);
+});
+
+displayResults();
+</script>
+
+</body>
+</html>

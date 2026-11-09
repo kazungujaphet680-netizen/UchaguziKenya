@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Candidates | Uchaguzi Kenya</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            background: #f4f7f5;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #006b3f;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .filters input,
+        .filters select {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .candidate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .candidate-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .candidate-card img {
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            border-radius: 7px;
+        }
+
+        .candidate-card h3 {
+            color: #006b3f;
+        }
+
+        .view-button {
+            display: inline-block;
+            background: #006b3f;
+            color: white;
+            padding: 10px 16px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .no-results {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #006b3f;
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<header>
+
+    <h2>UCHAGUZI KENYA</h2>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="admin.html">Admin Dashboard</a>
+        <a href="parties.html">Political Parties</a>
+    </nav>
+
+</header>
+
+
+<main class="container">
+
+    <a href="admin.html" class="back-link">
+        ← Back to Admin Dashboard
+    </a>
+
+    <h1>Candidate Management Centre</h1>
+
+    <p>
+        View and search candidates registered across different
+        counties and elective positions.
+    </p>
+
+
+    <!-- SEARCH AND FILTERS -->
+
+    <div class="filters">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search candidate by name or party">
+
+        <select id="countyFilter">
+            <option value="">All Counties</option>
+        </select>
+
+        <select id="positionFilter">
+            <option value="">All Elective Positions</option>
+            <option value="President">President</option>
+            <option value="Governor">Governor</option>
+            <option value="Senator">Senator</option>
+            <option value="Woman Representative">Woman Representative</option>
+            <option value="Member of Parliament">Member of Parliament</option>
+            <option value="MCA">MCA</option>
+        </select>
+
+    </div>
+
+
+    <h2 id="totalCandidates">Registered Candidates: 0</h2>
+
+
+    <!-- CANDIDATE DIRECTORY -->
+
+    <div class="candidate-grid" id="candidateGrid">
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    <p>
+        UCHAGUZI KENYA |
+        Your Vote. Your Voice. Your Future.
+    </p>
+
+</footer>
+
+
+<script>
+
+const candidateGrid =
+    document.getElementById("candidateGrid");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const countyFilter =
+    document.getElementById("countyFilter");
+
+const positionFilter =
+    document.getElementById("positionFilter");
+
+const totalCandidates =
+    document.getElementById("totalCandidates");
+
+
+let allCandidates = [];
+
+
+// LOAD ALL CANDIDATES
+
+function loadAllCandidates() {
+
+    allCandidates = [];
+
+    for (let i = 0; i < localStorage.length; i++) {
+
+        const key = localStorage.key(i);
+
+        if (key && key.startsWith("uchaguziCandidates_")) {
+
+            try {
+
+                const candidates = JSON.parse(
+                    localStorage.getItem(key) || "[]"
+                );
+
+                if (Array.isArray(candidates)) {
+
+                    const parts = key.split("_");
+
+                    const county = parts[1];
+
+                    const position = parts.slice(2).join("_");
+
+                    candidates.forEach(function(candidate) {
+
+                        allCandidates.push({
+
+                            ...candidate,
+
+                            county: county,
+
+                            position: position
+
+                        });
+
+                    });
+
+                }
+
+            } catch (error) {
+
+                console.log("Unable to read candidate information.");
+
+            }
+
+        }
+
+    }
+
+
+    populateCountyFilter();
+
+    displayCandidates();
+
+}
+
+
+// POPULATE COUNTY FILTER
+
+function populateCountyFilter() {
+
+    const counties = [];
+
+    allCandidates.forEach(function(candidate) {
+
+        if (!counties.includes(candidate.county)) {
+
+            counties.push(candidate.county);
+
+        }
+
+    });
+
+    counties.sort();
+
+    countyFilter.innerHTML =
+        '<option value="">All Counties</option>';
+
+    counties.forEach(function(county) {
+
+        const option = document.createElement("option");
+
+        option.value = county;
+
+        option.textContent = county;
+
+        countyFilter.appendChild(option);
+
+    });
+
+}
+
+
+// DISPLAY CANDIDATES
+
+function displayCandidates() {
+
+    candidateGrid.innerHTML = "";
+
+    const searchTerm =
+        searchInput.value.toLowerCase().trim();
+
+    const selectedCounty =
+        countyFilter.value;
+
+    const selectedPosition =
+        positionFilter.value;
+
+
+    const filteredCandidates = allCandidates.filter(function(candidate) {
+
+        const name =
+            (candidate.name || "").toLowerCase();
+
+        const party =
+            (candidate.party || "").toLowerCase();
+
+        const matchesSearch =
+            name.includes(searchTerm) ||
+            party.includes(searchTerm);
+
+        const matchesCounty =
+            !selectedCounty ||
+            candidate.county === selectedCounty;
+
+        const matchesPosition =
+            !selectedPosition ||
+            candidate.position === selectedPosition;
+
+        return matchesSearch &&
+               matchesCounty &&
+               matchesPosition;
+
+    });
+
+
+    totalCandidates.textContent =
+        "Registered Candidates: " + filteredCandidates.length;
+
+
+    if (filteredCandidates.length === 0) {
+
+        candidateGrid.innerHTML =
+            '<div class="no-results">No candidates found.</div>';
+
+        return;
+
+    }
+
+
+    filteredCandidates.forEach(function(candidate) {
+
+        const card = document.createElement("div");
+
+        card.className = "candidate-card";
+
+
+        if (candidate.photo) {
+
+            const photo = document.createElement("img");
+
+            photo.src = candidate.photo;
+
+            photo.alt = candidate.name || "Candidate photograph";
+
+            card.appendChild(photo);
+
+        }
+
+
+        const name = document.createElement("h3");
+
+        name.textContent = candidate.name;
+
+
+        const party = document.createElement("p");
+
+        party.textContent =
+            "Political Party: " + candidate.party;
+
+
+        const county = document.createElement("p");
+
+        county.textContent =
+            "County: " + candidate.county;
+
+
+        const position = document.createElement("p");
+
+        position.textContent =
+            "Position: " + candidate.position;
+
+
+        const viewButton = document.createElement("a");
+
+        viewButton.className = "view-button";
+
+        viewButton.textContent = "View Profile";
+
+        viewButton.href =
+            "candidate.html?county=" +
+            encodeURIComponent(candidate.county) +
+            "&position=" +
+            encodeURIComponent(candidate.position) +
+            "&candidate=" +
+            encodeURIComponent(candidate.id);
+
+
+        card.appendChild(name);
+
+        card.appendChild(party);
+
+        card.appendChild(county);
+
+        card.appendChild(position);
+
+        card.appendChild(viewButton);
+
+
+        candidateGrid.appendChild(card);
+
+    });
+
+}
+
+
+// SEARCH AND FILTER EVENTS
+
+searchInput.addEventListener("input", displayCandidates);
+
+countyFilter.addEventListener("change", displayCandidates);
+
+positionFilter.addEventListener("change", displayCandidates);
+
+
+// START
+
+loadAllCandidates();
+
+</script>
+
+</body>
+</html>
